@@ -1,0 +1,44 @@
+# Görsel Diyagramlar — {{ topic_title }}
+
+> PowerPoint / Keynote'a aktarmak için Mermaid + ASCII görseller. Her diyagramın kullanım yeri belirtilmiştir.
+
+---
+
+{% for diagram in diagrams %}
+## Diyagram {{ loop.index }}: {{ diagram.title }}
+
+**Slayt önerisi:** {{ diagram.slide_recommendation | default('-') }}
+
+{% if diagram.type == 'mermaid' -%}
+```mermaid
+{{ diagram.content }}
+```
+{%- elif diagram.type == 'ascii' -%}
+```
+{{ diagram.content }}
+```
+{%- else -%}
+{{ diagram.content }}
+{%- endif %}
+
+{% if diagram.caption -%}
+*{{ diagram.caption }}*
+{% endif %}
+
+---
+
+{% endfor %}
+
+## Renk Paleti / Stil Önerisi
+
+{% if style_palette -%}
+{% for color in style_palette -%}
+- **{{ color.name }}** (`{{ color.hex }}`) — {{ color.use }}
+{% endfor %}
+{%- else -%}
+*Şirket marka renkleri kullanılabilir; mevcut sunumlarla tutarlı kalın.*
+{% endif %}
+
+## Tipografi Önerisi
+
+{{ typography | default('Inter, SF Pro veya Open Sans — başlık 32-44pt, gövde 18-22pt.') }}

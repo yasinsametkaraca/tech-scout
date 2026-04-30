@@ -1,0 +1,44 @@
+# Diagrams — {{ topic_title }}
+
+> Mermaid + ASCII visuals ready to drop into PowerPoint / Keynote. Each diagram notes where it fits.
+
+---
+
+{% for diagram in diagrams %}
+## Diagram {{ loop.index }}: {{ diagram.title }}
+
+**Slide suggestion:** {{ diagram.slide_recommendation | default('-') }}
+
+{% if diagram.type == 'mermaid' -%}
+```mermaid
+{{ diagram.content }}
+```
+{%- elif diagram.type == 'ascii' -%}
+```
+{{ diagram.content }}
+```
+{%- else -%}
+{{ diagram.content }}
+{%- endif %}
+
+{% if diagram.caption -%}
+*{{ diagram.caption }}*
+{% endif %}
+
+---
+
+{% endfor %}
+
+## Color Palette / Style Suggestion
+
+{% if style_palette -%}
+{% for color in style_palette -%}
+- **{{ color.name }}** (`{{ color.hex }}`) — {{ color.use }}
+{% endfor %}
+{%- else -%}
+*Use the company's brand colors; stay consistent with existing decks.*
+{% endif %}
+
+## Typography Suggestion
+
+{{ typography | default('Inter, SF Pro or Open Sans — heading 32-44pt, body 18-22pt.') }}

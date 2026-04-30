@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(python scripts/ts_doctor.py:*)",
+      "Bash(python scripts/ts_scan_codebase.py:*)",
+      "Bash(python scripts/ts_list_history.py:*)",
+      "Bash(python scripts/ts_setup_run.py:*)",
+      "Bash(python scripts/ts_save_candidates.py:*)",
+      "Bash(python scripts/ts_load_candidates.py:*)",
+      "Bash(python scripts/ts_render_doc.py:*)",
+      "Bash(python scripts/ts_validate_package.py:*)",
+      "Bash(python -m tech_scout:*)",
+      "Bash(make doctor)",
+      "Bash(make test:*)",
+      "Bash(make lint)",
+      "Bash(make typecheck)",
+      "Bash(make format)",
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
+      "WebSearch",
+      "WebFetch"
+    ],
+    "deny": []
+  },
+  "env": {
+    "TECH_SCOUT_LOG_FORMAT": "json",
+    "TECH_SCOUT_LOG_LEVEL": "INFO"
+  }
+}

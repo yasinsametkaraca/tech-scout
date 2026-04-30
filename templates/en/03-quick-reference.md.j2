@@ -1,0 +1,70 @@
+# Quick Reference Card — {{ topic_title }}
+
+> One-page cheat sheet to glance at during the talk or a discussion.
+
+---
+
+## Core Concepts — One Sentence Each
+
+| Concept | One Sentence | Note |
+|---------|--------------|------|
+{% for c in core_concepts -%}
+| {{ c.name }} | {{ c.one_liner }} | {{ c.note | default('-') }} |
+{% endfor %}
+
+---
+
+## Key Numbers (Memorize)
+
+{% for f in key_numbers -%}
+- {{ f }}
+{% endfor %}
+
+---
+
+## {% if company_name %}{{ company_name }}'s {% endif %}Three Biggest Gaps (On This Topic)
+
+{% for gap in top_gaps -%}
+{{ loop.index }}. **{{ gap.label }}** — {{ gap.description }}
+{% endfor %}
+
+---
+
+## Top Three Recommendations
+
+{% for r in top_recommendations -%}
+{{ loop.index }}. **{{ r.title }}** ({{ r.effort }}) — {{ r.impact }}
+{% endfor %}
+
+---
+
+## Three Biggest Dangers
+
+{% for d in top_dangers -%}
+{{ loop.index }}. **{{ d.title }}** — {{ d.description }}
+{% endfor %}
+
+---
+
+## Three Core Messages
+
+{% for m in three_messages -%}
+{{ loop.index }}. {{ m }}
+{% endfor %}
+
+---
+
+## Most Likely 5 Questions + 15-Second Answers
+
+{% for qa in top_questions -%}
+### Q{{ loop.index }}: "{{ qa.question }}"
+
+**A:** {{ qa.answer }}
+
+{% endfor %}
+
+---
+
+## Closing Line (Memorize)
+
+> "{{ closing_line }}"

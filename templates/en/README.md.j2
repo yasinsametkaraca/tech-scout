@@ -1,0 +1,54 @@
+# {{ topic_title }} — Research Package
+
+**Date:** {{ generated_date }}
+**Week:** {{ week_label | default('-') }}
+**Topic Category:** {{ category | default('-') }}
+**Overall Score:** {{ overall_score | default('-') }}/10
+{% if company_name %}**Company:** {{ company_name }}{% endif %}
+
+---
+
+## What's in this Package?
+
+| File | For | Time |
+|------|-----|------|
+| `00-executive-summary.md` | Manager, non-technical | ~5 min read |
+| `01-detailed-analysis.md` | Engineering team, deep read | ~30-45 min read |
+| `02-presentation.md` | Presentation prep | ~12-15 min talk |
+| `03-quick-reference.md` | Card to glance at during the talk | One page |
+| `04-diagrams.md` | Slide preparation | Visual reference |
+| `05-slack-summary.md` | All employees | ~1 min read |
+| `06-sources.md` | In-depth research | Reference |
+
+---
+
+## For Quick Decisions
+
+If we do **EXACTLY ONE THING** in the next {{ time_horizon | default('3 months') }}, it is this:
+
+> **{{ single_action }}**
+
+## Three Core Messages
+
+{% for m in three_messages -%}
+{{ loop.index }}. {{ m }}
+{% endfor %}
+
+## Suggested Next Steps
+
+{% for step in next_steps -%}
+- [ ] {{ step }}
+{% endfor %}
+
+---
+
+## Production Metadata
+
+{% if run_metadata -%}
+- **Run ID:** `{{ run_metadata.run_id }}`
+- **Scan window:** {{ run_metadata.scan_window | default('-') }}
+- **Sources scanned:** {{ run_metadata.sources_scanned | default('-') }}
+- **Candidate count:** {{ run_metadata.candidate_count | default('-') }}
+- **Selected topic(s):** {{ run_metadata.selected_ids | join(', ') }}
+- **Depth used:** {{ run_metadata.depth | default('standard') }}
+{% endif %}

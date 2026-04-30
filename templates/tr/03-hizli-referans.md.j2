@@ -1,0 +1,70 @@
+# Hızlı Referans Kartı — {{ topic_title }}
+
+> Sunum sırasında veya tartışmada hızlıca göz atılacak tek sayfa.
+
+---
+
+## Ana Kavramlar — Tek Cümleyle
+
+| Kavram | Tek Cümleyle | Not |
+|--------|--------------|-----|
+{% for c in core_concepts -%}
+| {{ c.name }} | {{ c.one_liner }} | {{ c.note | default('-') }} |
+{% endfor %}
+
+---
+
+## Önemli Sayılar (Hafızada Tut)
+
+{% for f in key_numbers -%}
+- {{ f }}
+{% endfor %}
+
+---
+
+## {% if company_name %}{{ company_name }}'in {% endif %}Üç Büyük Boşluğu (Bu Konuda)
+
+{% for gap in top_gaps -%}
+{{ loop.index }}. **{{ gap.label }}** — {{ gap.description }}
+{% endfor %}
+
+---
+
+## En Önemli Üç Öneri
+
+{% for r in top_recommendations -%}
+{{ loop.index }}. **{{ r.title }}** ({{ r.effort }}) — {{ r.impact }}
+{% endfor %}
+
+---
+
+## Üç Büyük Tehlike
+
+{% for d in top_dangers -%}
+{{ loop.index }}. **{{ d.title }}** — {{ d.description }}
+{% endfor %}
+
+---
+
+## Üç Temel Mesaj
+
+{% for m in three_messages -%}
+{{ loop.index }}. {{ m }}
+{% endfor %}
+
+---
+
+## En Olası 5 Soru + 15 Saniyelik Cevaplar
+
+{% for qa in top_questions -%}
+### S{{ loop.index }}: "{{ qa.question }}"
+
+**C:** {{ qa.answer }}
+
+{% endfor %}
+
+---
+
+## Kapanış Cümlesi (Ezberle)
+
+> "{{ closing_line }}"

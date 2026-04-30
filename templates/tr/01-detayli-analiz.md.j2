@@ -1,0 +1,276 @@
+# {{ topic_title }} — Kapsamlı Teknik Analiz
+
+> **Hazırlayan:** {{ author | default('AI Engineering') }}{% if company_name %} ({{ company_name }}){% endif %}
+> **Tarih:** {{ generated_date }}
+> **Birincil Referans:** [{{ primary_source.title }}]({{ primary_source.url }})
+> **Amaç:** Konunun{% if company_name %} {{ company_name }} platformuna{% endif %} uygulanabilirliği, mevcut mimariyle uyumu ve aksiyon önerileri.
+
+## İçindekiler
+
+1. Executive Summary
+2. {{ topic_title }} — Derinlemesine Analiz
+3. {% if company_name %}{{ company_name }}{% else %}Mevcut{% endif %} Mimari — Teknik Durum
+4. Gap Analizi — Nerede Duruyoruz, Nereye Gidebiliriz
+5. Uygulama Katmanları ve Teknik Tasarım
+6. Maliyet-Fayda Analizi
+7. Risk Analizi ve Zorluklar
+8. Uygulama Yol Haritası
+9. Sonuç ve Öneriler
+10. Ek: Referanslar
+11. Ek: Önemli Alıntılar
+
+---
+
+## 1. Executive Summary
+
+### Konu Ne Diyor?
+
+{{ executive_summary.what }}
+
+### Şirket İçin Ne Anlama Geliyor?
+
+{{ executive_summary.relevance }}
+
+### Tek Cümle Tezi
+
+> **{{ executive_summary.thesis }}**
+
+---
+
+## 2. {{ topic_title }} — Derinlemesine Analiz
+
+### 2.1 Problem Tanımı
+
+{{ deep_dive.problem }}
+
+### 2.2 Mimari ve Metodoloji
+
+{{ deep_dive.architecture }}
+
+{% if deep_dive.code_example -%}
+### 2.3 Kod Örneği
+
+```{{ deep_dive.code_language | default('python') }}
+{{ deep_dive.code_example }}
+```
+
+{{ deep_dive.code_explanation | default('') }}
+{% endif -%}
+
+### 2.{{ '4' if deep_dive.code_example else '3' }} Sonuçların Özeti
+
+{% if deep_dive.results_table -%}
+| Metrik | Değer |
+|--------|-------|
+{% for row in deep_dive.results_table -%}
+| {{ row.metric }} | {{ row.value }} |
+{% endfor %}
+{%- else -%}
+{{ deep_dive.results }}
+{% endif %}
+
+### 2.{{ '5' if deep_dive.code_example else '4' }} Limitasyonlar
+
+{% for lim in deep_dive.limitations -%}
+- {{ lim }}
+{% endfor %}
+
+---
+
+## 3. {% if company_name %}{{ company_name }}{% else %}Mevcut{% endif %} Mimari — Teknik Durum
+
+### 3.1 Genel Yapı
+
+{{ company_state.overview }}
+
+### 3.2 İlgili Modüllerin Durumu
+
+{% for mod in company_state.relevant_modules -%}
+- **{{ mod.name }}** — {{ mod.description }}
+{% endfor %}
+
+### 3.3 Mevcut Mekanizmalar
+
+{% if company_state.existing_mechanisms -%}
+{% for mech in company_state.existing_mechanisms -%}
+- **{{ mech.name }}** ({{ mech.location | default('-') }}) — {{ mech.description }}
+{% endfor %}
+{%- else -%}
+*Bu konuda mevcut bir mekanizma tespit edilmedi.*
+{% endif %}
+
+### 3.4 Güçlü ve Zayıf Yanlar
+
+| Güçlü Yanlar | Zayıf Yanlar |
+|--------------|--------------|
+{% for pair in company_state.strengths_weaknesses -%}
+| {{ pair.strength | default('-') }} | {{ pair.weakness | default('-') }} |
+{% endfor %}
+
+---
+
+## 4. Gap Analizi
+
+| {{ topic_title }} Kavramı | Şirkette Karşılığı | Mevcut Durum | Hedef |
+|---------------------------|---------------------|--------------|-------|
+{% for gap in gap_analysis -%}
+| {{ gap.concept }} | {{ gap.local_equivalent }} | {{ gap.current }} | {{ gap.target }} |
+{% endfor %}
+
+---
+
+## 5. Uygulama Katmanları ve Teknik Tasarım
+
+{% for layer in implementation_layers -%}
+### Katman {{ loop.index }}: {{ layer.name }}
+
+**Ne:** {{ layer.what }}
+
+**Neden önemli:** {{ layer.why }}
+
+**Teknik tasarım:**
+
+{{ layer.design }}
+
+{% if layer.code_example -%}
+```{{ layer.code_language | default('python') }}
+{{ layer.code_example }}
+```
+{% endif -%}
+
+**Etki:**
+
+{% for impact in layer.impacts -%}
+- {{ impact }}
+{% endfor %}
+
+**Tahmini efor:** {{ layer.effort }}
+
+---
+{% endfor %}
+
+## 6. Maliyet-Fayda Analizi
+
+### 6.1 Yatırım Tarafı
+
+| Kalem | Tutar / Süre |
+|-------|--------------|
+{% for item in cost_benefit.investment_items -%}
+| {{ item.label }} | {{ item.value }} |
+{% endfor %}
+
+### 6.2 Getiri Tarafı
+
+| Kalem | Tahmini Etki |
+|-------|--------------|
+{% for item in cost_benefit.return_items -%}
+| {{ item.label }} | {{ item.value }} |
+{% endfor %}
+
+### 6.3 Break-Even
+
+{{ cost_benefit.break_even_analysis }}
+
+### 6.4 Enterprise Değeri
+
+{% for value in cost_benefit.enterprise_value -%}
+- **{{ value.dimension }}** — {{ value.description }}
+{% endfor %}
+
+---
+
+## 7. Risk Analizi ve Zorluklar
+
+### 7.1 Riskler
+
+| Risk | Seviye | Açıklama | Mitigasyon |
+|------|--------|----------|------------|
+{% for risk in risks -%}
+| {{ risk.name }} | {{ risk.level }} | {{ risk.description }} | {{ risk.mitigation }} |
+{% endfor %}
+
+### 7.2 Şüpheci Sorular
+
+{% for q in skeptic_questions -%}
+- **{{ q.question }}** — {{ q.answer }}
+{% endfor %}
+
+---
+
+## 8. Uygulama Yol Haritası
+
+{% for phase in roadmap -%}
+### Faz {{ loop.index }} — {{ phase.title }} ({{ phase.timeframe }})
+
+**Kapsam:**
+{% for item in phase.scope -%}
+- {{ item }}
+{% endfor %}
+
+**Kabul kriterleri:**
+{% for criterion in phase.acceptance_criteria -%}
+- {{ criterion }}
+{% endfor %}
+
+**Tahmini efor:** {{ phase.effort }}
+
+---
+{% endfor %}
+
+## 9. Sonuç ve Öneriler
+
+### 9.1 Ana Tez
+
+{{ conclusion.thesis }}
+
+### 9.2 Neden Şimdi?
+
+{% for reason in conclusion.why_now -%}
+{{ loop.index }}. {{ reason }}
+{% endfor %}
+
+### 9.3 Dikkat Edilmesi Gerekenler
+
+{% for concern in conclusion.cautions -%}
+- {{ concern }}
+{% endfor %}
+
+### 9.4 Tartışma İçin Sorular
+
+{% for q in conclusion.open_questions -%}
+{{ loop.index }}. {{ q }}
+{% endfor %}
+
+---
+
+## 10. Ek: Referanslar
+
+### Birincil Kaynak
+
+- [{{ primary_source.title }}]({{ primary_source.url }}){% if primary_source.publication_date %} — {{ primary_source.publication_date }}{% endif %}{% if primary_source.publisher %} ({{ primary_source.publisher }}){% endif %}
+
+{% if secondary_sources -%}
+### İkincil Kaynaklar
+
+{% for s in secondary_sources -%}
+- [{{ s.title }}]({{ s.url }}){% if s.publication_date %} — {{ s.publication_date }}{% endif %}{% if s.note %} — {{ s.note }}{% endif %}
+{% endfor %}
+{% endif -%}
+
+{% if codebase_refs -%}
+### Şirket Kod Tabanı Referansları
+
+{% for ref in codebase_refs -%}
+- `{{ ref.path }}`{% if ref.line %}:{{ ref.line }}{% endif %} — {{ ref.note }}
+{% endfor %}
+{% endif %}
+
+---
+
+## 11. Ek: Önemli Alıntılar
+
+{% for q in key_quotes -%}
+> "{{ q.text }}"
+{% if q.attribution %}— *{{ q.attribution }}*{% endif %}
+
+{% endfor %}

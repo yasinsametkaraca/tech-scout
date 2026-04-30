@@ -1,0 +1,54 @@
+# {{ topic_title }} — Araştırma Paketi
+
+**Tarih:** {{ generated_date }}
+**Hafta:** {{ week_label | default('-') }}
+**Konu Kategorisi:** {{ category | default('-') }}
+**Genel Skor:** {{ overall_score | default('-') }}/10
+{% if company_name %}**Şirket:** {{ company_name }}{% endif %}
+
+---
+
+## Bu Pakette Ne Var?
+
+| Dosya | Kim İçin | Süre |
+|-------|----------|------|
+| `00-yonetici-ozeti.md` | Yönetici, non-technical | ~5 dk okuma |
+| `01-detayli-analiz.md` | Teknik ekip, derin okuma | ~30-45 dk okuma |
+| `02-sunum.md` | Sunum hazırlığı | ~12-15 dk sunum |
+| `03-hizli-referans.md` | Sunum sırasında bakılacak kart | Tek sayfa |
+| `04-gorsel-diyagramlar.md` | Slayt hazırlığı | Görsel referans |
+| `05-slack-ozeti.md` | Tüm çalışanlar | ~1 dk okuma |
+| `06-kaynaklar.md` | Derinlemesine araştırma | Referans |
+
+---
+
+## Hızlı Karar İçin
+
+Eğer önümüzdeki {{ time_horizon | default('3 ay') }}'da **TEK BİR ŞEY** yapacaksak, o şudur:
+
+> **{{ single_action }}**
+
+## Üç Temel Mesaj
+
+{% for m in three_messages -%}
+{{ loop.index }}. {{ m }}
+{% endfor %}
+
+## Önerilen Sonraki Adımlar
+
+{% for step in next_steps -%}
+- [ ] {{ step }}
+{% endfor %}
+
+---
+
+## Bu Paketin Üretim Bilgileri
+
+{% if run_metadata -%}
+- **Run ID:** `{{ run_metadata.run_id }}`
+- **Tarama tarih aralığı:** {{ run_metadata.scan_window | default('-') }}
+- **Taranan kaynak sayısı:** {{ run_metadata.sources_scanned | default('-') }}
+- **Aday konu sayısı:** {{ run_metadata.candidate_count | default('-') }}
+- **Seçilen konu(lar):** {{ run_metadata.selected_ids | join(', ') }}
+- **Kullanılan derinlik:** {{ run_metadata.depth | default('standart') }}
+{% endif %}

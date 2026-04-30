@@ -1,0 +1,61 @@
+# {{ topic_title }} — Presentation
+
+**Duration:** {{ talk_duration_minutes | default(15) }} min + {{ qa_duration_minutes | default(10) }} min Q&A
+**Slides:** {{ slides | length }}
+**Author:** {{ author | default('AI Engineering') }}{% if company_name %} ({{ company_name }}){% endif %}
+**Date:** {{ generated_date }}
+
+---
+
+{% for slide in slides %}
+## SLIDE {{ loop.index }}: {{ slide.title }}
+
+{% if slide.visual -%}
+**Visual:**
+
+{{ slide.visual }}
+
+{% endif -%}
+
+**Speaking notes ({{ slide.speaking_seconds | default(45) }}s):** {{ slide.speech }}
+
+{% if slide.note %}
+> *Speaker note:* {{ slide.note }}
+{% endif %}
+
+---
+
+{% endfor %}
+
+## Q&A Scenarios
+
+{% for qa in qa_pairs -%}
+### Q{{ loop.index }}: "{{ qa.question }}"
+
+**A:** {{ qa.answer }}
+
+{% endfor %}
+
+---
+
+## Time Management
+
+| Minute | Slide | Topic |
+|--------|-------|-------|
+{% for slot in time_management -%}
+| {{ slot.minute }} | {{ slot.slide }} | {{ slot.topic }} |
+{% endfor %}
+
+---
+
+## Tone and Style Reminders
+
+{% for tip in style_tips -%}
+- {{ tip }}
+{% endfor %}
+
+---
+
+## Closing Line (Memorize)
+
+> "{{ closing_line }}"

@@ -1,0 +1,63 @@
+# Sources — {{ topic_title }}
+
+> Every reference used in this package, with the reason it was chosen.
+
+---
+
+## Primary Sources
+
+| # | Source | Link | Date | Why It Matters |
+|---|--------|------|------|----------------|
+{% for s in primary_sources -%}
+| {{ loop.index }} | {{ s.title }} | [link]({{ s.url }}) | {{ s.publication_date | default('-') }} | {{ s.why }} |
+{% endfor %}
+
+## Secondary Sources (Analysis / Discussion)
+
+{% if secondary_sources -%}
+| # | Source | Link | Date | Author Position |
+|---|--------|------|------|------------------|
+{% for s in secondary_sources -%}
+| {{ loop.index }} | {{ s.title }} | [link]({{ s.url }}) | {{ s.publication_date | default('-') }} | {{ s.position | default('-') }} |
+{% endfor %}
+{%- else -%}
+*No secondary source available, or the topic is too new.*
+{% endif %}
+
+## Contrarian Voices / Skeptical Takes
+
+{% if contrarian_sources -%}
+{% for s in contrarian_sources -%}
+- [{{ s.title }}]({{ s.url }}){% if s.publication_date %} — {{ s.publication_date }}{% endif %} — {{ s.argument }}
+{% endfor %}
+{%- else -%}
+*No notable contrarian view yet; worth tracking the topic over time.*
+{% endif %}
+
+{% if codebase_refs -%}
+## Company Codebase References
+
+Files reviewed (Phase 1 + Phase 4):
+
+{% for r in codebase_refs -%}
+- `{{ r.path }}`{% if r.line %}:{{ r.line }}{% endif %} — {{ r.note }}
+{% endfor %}
+{% endif -%}
+
+{% if related_prior_runs -%}
+## Related Prior Research
+
+{% for p in related_prior_runs -%}
+- **{{ p.date }} — {{ p.title }}** — {{ p.relationship }}
+{% endfor %}
+{% endif %}
+
+## Suggested Further Reading
+
+{% if further_reading -%}
+{% for r in further_reading -%}
+- [{{ r.title }}]({{ r.url }}) — {{ r.why }}
+{% endfor %}
+{%- else -%}
+*Official documentation and primary-source references are sufficient for further reading on this topic.*
+{% endif %}

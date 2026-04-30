@@ -1,0 +1,61 @@
+# {{ topic_title }} — Sunum
+
+**Süre:** {{ talk_duration_minutes | default(15) }} dakika + {{ qa_duration_minutes | default(10) }} dk Q&A
+**Slayt sayısı:** {{ slides | length }}
+**Hazırlayan:** {{ author | default('AI Engineering') }}{% if company_name %} ({{ company_name }}){% endif %}
+**Tarih:** {{ generated_date }}
+
+---
+
+{% for slide in slides %}
+## SLAYT {{ loop.index }}: {{ slide.title }}
+
+{% if slide.visual -%}
+**Görsel:**
+
+{{ slide.visual }}
+
+{% endif -%}
+
+**Konuşma metni ({{ slide.speaking_seconds | default(45) }} sn):** {{ slide.speech }}
+
+{% if slide.note %}
+> *Sunum notu:* {{ slide.note }}
+{% endif %}
+
+---
+
+{% endfor %}
+
+## Soru-Cevap Senaryoları
+
+{% for qa in qa_pairs -%}
+### Q{{ loop.index }}: "{{ qa.question }}"
+
+**A:** {{ qa.answer }}
+
+{% endfor %}
+
+---
+
+## Sunum Zaman Yönetimi
+
+| Dakika | Slayt | Konu |
+|--------|-------|------|
+{% for slot in time_management -%}
+| {{ slot.minute }} | {{ slot.slide }} | {{ slot.topic }} |
+{% endfor %}
+
+---
+
+## Ses Tonu ve Stil Hatırlatmaları
+
+{% for tip in style_tips -%}
+- {{ tip }}
+{% endfor %}
+
+---
+
+## Kapanış Cümlesi (Ezberle)
+
+> "{{ closing_line }}"

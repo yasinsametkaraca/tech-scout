@@ -1,0 +1,50 @@
+# Yönetici Özeti — {{ topic_title }}
+
+**Tarih:** {{ generated_date }}
+**Hazırlayan:** {{ author | default('AI Engineering') }}
+{% if company_name %}**Şirket:** {{ company_name }}
+{% endif %}**Süre:** ~5 dakikalık okuma
+
+---
+
+## Tek Cümlede Mesaj
+
+{{ headline_message }}
+
+## Sorun (Şu An)
+
+{{ problem_description }}
+
+## Çözüm (Önerilen)
+
+{{ solution_description }}
+
+## Yatırım — Geri Dönüş
+
+| | |
+|--|--|
+| Yatırım | {{ investment.summary }} |
+| Tahmini efor | {{ investment.engineer_weeks }} kişi-hafta |
+| Geri dönüş süresi | {{ roi.payback_period }} |
+| Yıllık tasarruf / gelir etkisi | {{ roi.annual_value }} |
+| Risk seviyesi | {{ risk_level }} |
+
+## Üç Aşamada Plan
+
+{% for phase in plan_phases -%}
+{{ loop.index }}. **{{ phase.timeframe }}:** {{ phase.description }}
+{% endfor %}
+
+## Karar İhtiyacı
+
+{% for decision in decisions_needed -%}
+{{ loop.index }}. {{ decision }}
+{% endfor %}
+
+## Eylem Çağrısı
+
+{{ call_to_action }}
+
+---
+
+> *Daha derin bir analiz için `01-detayli-analiz.md`'ye bakın. Hızlı bir referans için `03-hizli-referans.md`'yi açın. Ekiple paylaşmak için `05-slack-ozeti.md`'yi kullanın.*

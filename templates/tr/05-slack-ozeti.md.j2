@@ -1,0 +1,37 @@
+# Slack Özeti — {{ topic_title }}
+
+> **Kanal önerisi:** {{ slack_channel | default('#engineering, #ai-research, #tech-watch') }}
+> **Uzunluk:** ~250 kelime
+> **Ton:** Heyecan verici, samimi ama profesyonel
+
+---
+
+🚀 **{{ slack_headline }}**
+
+{{ slack_intro }}
+
+**TL;DR:** {{ tldr }}
+
+**Bu hafta dikkat çeken şey:**
+
+{{ what_caught_eye }}
+
+{% if company_name -%}**{{ company_name }} için ne anlama geliyor:**{%- else -%}**Bizim için ne anlama geliyor:**{%- endif %}
+
+{% for point in what_it_means_for_us -%}
+- {% if point.kind == 'pro' %}✅{% elif point.kind == 'con' %}⚠️{% else %}💡{% endif %} {{ point.text }}
+{% endfor %}
+
+**Sayılar:**
+
+{% for n in slack_numbers -%}
+- {% if n.icon %}{{ n.icon }}{% else %}📊{% endif %} {{ n.text }}
+{% endfor %}
+
+**Detaylı analiz** ({{ detailed_analysis_size | default('~30 dk okuma') }}): {{ detailed_analysis_pointer | default('thread\'e cevap atın, gönderirim') }}
+
+**Soru/yorum varsa thread\'de tartışalım** 🧵
+
+---
+
+#ai #engineering #{{ topic_tag | default('tech-watch') }}

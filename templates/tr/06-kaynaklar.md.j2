@@ -1,0 +1,63 @@
+# Kaynaklar — {{ topic_title }}
+
+> Bu paketteki tüm referanslar. Her birinin neden seçildiği belirtilmiştir.
+
+---
+
+## Birincil Kaynaklar
+
+| # | Kaynak | Link | Tarih | Neden Önemli |
+|---|--------|------|-------|--------------|
+{% for s in primary_sources -%}
+| {{ loop.index }} | {{ s.title }} | [link]({{ s.url }}) | {{ s.publication_date | default('-') }} | {{ s.why }} |
+{% endfor %}
+
+## İkincil Kaynaklar (Analiz / Tartışma)
+
+{% if secondary_sources -%}
+| # | Kaynak | Link | Tarih | Yazarın Pozisyonu |
+|---|--------|------|-------|---------------------|
+{% for s in secondary_sources -%}
+| {{ loop.index }} | {{ s.title }} | [link]({{ s.url }}) | {{ s.publication_date | default('-') }} | {{ s.position | default('-') }} |
+{% endfor %}
+{%- else -%}
+*İkincil kaynak bulunamadı veya konu yeterince yeni.*
+{% endif %}
+
+## Karşıt Görüşler / Şüpheci Yorumlar
+
+{% if contrarian_sources -%}
+{% for s in contrarian_sources -%}
+- [{{ s.title }}]({{ s.url }}){% if s.publication_date %} — {{ s.publication_date }}{% endif %} — {{ s.argument }}
+{% endfor %}
+{%- else -%}
+*Henüz dikkat çekici bir karşıt görüş bulunmadı; konuyu zaman içinde takip etmek değerli olabilir.*
+{% endif %}
+
+{% if codebase_refs -%}
+## Şirket Kod Tabanı Referansları
+
+İncelenen dosyalar (Phase 1 + Phase 4):
+
+{% for r in codebase_refs -%}
+- `{{ r.path }}`{% if r.line %}:{{ r.line }}{% endif %} — {{ r.note }}
+{% endfor %}
+{% endif -%}
+
+{% if related_prior_runs -%}
+## İlgili Önceki Araştırmalar
+
+{% for p in related_prior_runs -%}
+- **{{ p.date }} — {{ p.title }}** — {{ p.relationship }}
+{% endfor %}
+{% endif %}
+
+## Önerilen Ek Okumalar
+
+{% if further_reading -%}
+{% for r in further_reading -%}
+- [{{ r.title }}]({{ r.url }}) — {{ r.why }}
+{% endfor %}
+{%- else -%}
+*Konuyla ilgili ek okuma için resmi dokümantasyon ve birincil kaynakların referansları yeterlidir.*
+{% endif %}

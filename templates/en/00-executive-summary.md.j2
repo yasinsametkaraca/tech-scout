@@ -1,0 +1,50 @@
+# Executive Summary — {{ topic_title }}
+
+**Date:** {{ generated_date }}
+**Author:** {{ author | default('AI Engineering') }}
+{% if company_name %}**Company:** {{ company_name }}
+{% endif %}**Reading time:** ~5 minutes
+
+---
+
+## Headline Message
+
+{{ headline_message }}
+
+## Problem (Today)
+
+{{ problem_description }}
+
+## Solution (Proposed)
+
+{{ solution_description }}
+
+## Investment vs. Return
+
+| | |
+|--|--|
+| Investment | {{ investment.summary }} |
+| Estimated effort | {{ investment.engineer_weeks }} engineer-weeks |
+| Payback period | {{ roi.payback_period }} |
+| Annual savings / revenue impact | {{ roi.annual_value }} |
+| Risk level | {{ risk_level }} |
+
+## Three-Phase Plan
+
+{% for phase in plan_phases -%}
+{{ loop.index }}. **{{ phase.timeframe }}:** {{ phase.description }}
+{% endfor %}
+
+## Decisions Needed
+
+{% for decision in decisions_needed -%}
+{{ loop.index }}. {{ decision }}
+{% endfor %}
+
+## Call to Action
+
+{{ call_to_action }}
+
+---
+
+> *For deeper analysis see `01-detailed-analysis.md`. For a quick reference card open `03-quick-reference.md`. To share with the team use `05-slack-summary.md`.*

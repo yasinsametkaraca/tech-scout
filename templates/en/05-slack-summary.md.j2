@@ -1,0 +1,37 @@
+# Slack Summary — {{ topic_title }}
+
+> **Suggested channel:** {{ slack_channel | default('#engineering, #ai-research, #tech-watch') }}
+> **Length:** ~250 words
+> **Tone:** Energetic, friendly but professional
+
+---
+
+🚀 **{{ slack_headline }}**
+
+{{ slack_intro }}
+
+**TL;DR:** {{ tldr }}
+
+**What caught my eye this week:**
+
+{{ what_caught_eye }}
+
+{% if company_name -%}**What it means for {{ company_name }}:**{%- else -%}**What it means for us:**{%- endif %}
+
+{% for point in what_it_means_for_us -%}
+- {% if point.kind == 'pro' %}✅{% elif point.kind == 'con' %}⚠️{% else %}💡{% endif %} {{ point.text }}
+{% endfor %}
+
+**Numbers:**
+
+{% for n in slack_numbers -%}
+- {% if n.icon %}{{ n.icon }}{% else %}📊{% endif %} {{ n.text }}
+{% endfor %}
+
+**Detailed analysis** ({{ detailed_analysis_size | default('~30 min read') }}): {{ detailed_analysis_pointer | default('reply in thread, I will send it over') }}
+
+**Reply in thread for questions / comments** 🧵
+
+---
+
+#ai #engineering #{{ topic_tag | default('tech-watch') }}

@@ -1,0 +1,227 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tech-scout"
+version = "0.1.0"
+description = "Claude Code-native plugin for weekly tech research and company-specific integration analysis."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [
+    { name = "Yasin Karaca" },
+]
+keywords = ["claude-code", "tech-research", "ai-engineering", "research-automation"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    "pydantic>=2.7,<3.0",
+    "pydantic-settings>=2.3,<3.0",
+    "jinja2>=3.1,<4.0",
+    "structlog>=24.1,<25.0",
+    "python-slugify>=8.0,<9.0",
+    "pyyaml>=6.0,<7.0",
+    "tomli>=2.0; python_version<'3.11'",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0,<9.0",
+    "pytest-cov>=5.0,<6.0",
+    "pytest-asyncio>=0.23,<1.0",
+    "ruff>=0.5,<1.0",
+    "mypy>=1.10,<2.0",
+    "pre-commit>=3.7,<4.0",
+    "types-PyYAML",
+]
+
+[project.urls]
+Homepage = "https://github.com/yasinkaraca/tech-scout"
+Documentation = "https://github.com/yasinkaraca/tech-scout/tree/main/docs"
+Repository = "https://github.com/yasinkaraca/tech-scout"
+Issues = "https://github.com/yasinkaraca/tech-scout/issues"
+
+# ---------------------------------------------------------------------------
+# Hatchling build configuration
+# ---------------------------------------------------------------------------
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tech_scout"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/tech_scout",
+    "scripts",
+    "templates",
+    "tests",
+    "docs",
+    ".claude",
+    "README.md",
+    "LICENSE",
+    "Makefile",
+    "pyproject.toml",
+]
+exclude = [
+    "**/__pycache__",
+    "**/.tech-scout",
+]
+
+# ---------------------------------------------------------------------------
+# Ruff (lint + format)
+# ---------------------------------------------------------------------------
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "scripts", "tests"]
+extend-exclude = [
+    "tests/fixtures/sample_codebases",
+    ".tech-scout",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "N",   # pep8-naming
+    "SIM", # flake8-simplify
+    "RUF", # ruff-specific
+    "PL",  # pylint
+    "TRY", # tryceratops (exception handling)
+    "PT",  # pytest style
+    "PTH", # use pathlib
+    "ARG", # unused arguments
+]
+ignore = [
+    "E501",    # line length handled by formatter
+    "PLR0913", # too many arguments — sometimes needed
+    "TRY003",  # long exception messages — we want them
+    # Turkish-language locale data legitimately uses dotless-i / em-dash etc.
+    # The project ships a Turkish locale; flagging these would force ASCII-only
+    # text, which defeats the point of a localized package.
+    "RUF001", # ambiguous unicode chars in strings
+    "RUF002", # ambiguous unicode chars in docstrings
+    "RUF003", # ambiguous unicode chars in comments
+    # Magic numbers in domain validators / size limits are clearer inline than
+    # hoisted to module-level constants nobody else references.
+    "PLR2004",
+    # Lazy imports inside helper code path (e.g., to break import cycles for
+    # rarely-used utilities) are intentional.
+    "PLC0415",
+    # __all__ ordering is grouped by category in this codebase, not alphabetical.
+    "RUF022",
+    # Module-level mutable global is the standard pattern for "configure once"
+    # logging setup.
+    "PLW0603",
+    # logging.error vs logging.exception — both are acceptable; we control the
+    # call sites and don't always want a stack trace embedded.
+    "TRY400",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests are allowed to use conventional pytest patterns: broad pytest.raises,
+# magic numbers, lazy imports, blind asserts in pytest.raises blocks.
+"tests/**" = [
+    "PLR2004", # magic values
+    "S101",    # asserts
+    "ARG",     # unused fixtures
+    "PT011",   # broad pytest.raises (we don't always want to assert match=)
+    "PT018",   # split compound assertions (style)
+    "PLC0415", # local imports (used to avoid circular test deps)
+    "B017",    # blind Exception in pytest.raises — sometimes intentional
+]
+"scripts/**" = ["T201"]  # print() allowed in CLI scripts
+
+[tool.ruff.lint.isort]
+known-first-party = ["tech_scout"]
+combine-as-imports = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+
+# ---------------------------------------------------------------------------
+# Mypy (strict)
+# ---------------------------------------------------------------------------
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_unused_ignores = true
+warn_return_any = true
+warn_unreachable = true
+disallow_any_generics = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+implicit_reexport = false
+strict_equality = true
+extra_checks = true
+files = ["src", "scripts"]
+
+[[tool.mypy.overrides]]
+module = ["slugify.*", "yaml.*"]
+ignore_missing_imports = true
+
+# ---------------------------------------------------------------------------
+# Pytest
+# ---------------------------------------------------------------------------
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=src/tech_scout",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+    "--cov-fail-under=85",
+]
+testpaths = ["tests"]
+markers = [
+    "unit: fast in-memory unit tests",
+    "integration: slower tests using real filesystem",
+    "smoke: end-to-end smoke tests (manual run only)",
+]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+branch = true
+source = ["src/tech_scout"]
+omit = [
+    "src/tech_scout/__main__.py",
+    "*/__init__.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "@overload",
+]
+show_missing = true
+skip_covered = false
