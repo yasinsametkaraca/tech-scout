@@ -48,10 +48,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yasinkaraca/tech-scout"
-Documentation = "https://github.com/yasinkaraca/tech-scout/tree/main/docs"
-Repository = "https://github.com/yasinkaraca/tech-scout"
-Issues = "https://github.com/yasinkaraca/tech-scout/issues"
+Homepage = "https://github.com/yasinsametkaraca/tech-scout"
+Documentation = "https://github.com/yasinsametkaraca/tech-scout/tree/main/docs"
+Repository = "https://github.com/yasinsametkaraca/tech-scout"
+Issues = "https://github.com/yasinsametkaraca/tech-scout/issues"
 
 # ---------------------------------------------------------------------------
 # Hatchling build configuration

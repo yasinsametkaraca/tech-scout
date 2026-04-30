@@ -91,7 +91,7 @@ no setup wizard, no extra account.
 
 ```bash
 # 1. Clone
-git clone <repo-url> tech-scout
+git clone https://github.com/yasinsametkaraca/tech-scout.git
 cd tech-scout
 
 # 2. Install Python dependencies (helpers only)

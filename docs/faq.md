@@ -19,8 +19,8 @@
 **A:**
 
 ```bash
-git clone <repo-url> ~/Documents/Github/tech-scout
-cd ~/Documents/Github/tech-scout
+git clone https://github.com/yasinsametkaraca/tech-scout.git
+cd tech-scout
 make install-dev   # installs Python deps + pre-commit hooks
 ```
 
