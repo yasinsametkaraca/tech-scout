@@ -18,7 +18,7 @@ from tech_scout.domain.exceptions import CodebaseScanError
 if sys.version_info >= (3, 11):
     import tomllib
 else:
-    import tomli as tomllib  # type: ignore[no-redef, unused-ignore]
+    import tomli as tomllib  # type: ignore[no-redef, unused-ignore, import-not-found]
 
 
 _FILENAMES = {"pyproject.toml", "requirements.txt", "setup.py", "setup.cfg", "Pipfile"}
