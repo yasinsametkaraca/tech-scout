@@ -214,6 +214,15 @@ files = ["src", "scripts"]
 module = ["slugify.*", "yaml.*"]
 ignore_missing_imports = true
 
+# tomli is only installed on Python < 3.11 (see [project] dependencies).
+# On Python 3.11+ the conditional `import tomli` branch in
+# `tech_scout.utils.toml_compat` is unreachable at runtime, but mypy still
+# type-checks it under our pinned python_version=3.10. Tell mypy to treat a
+# missing tomli as Any so the matrix stays green on every Python.
+[[tool.mypy.overrides]]
+module = ["tomli"]
+ignore_missing_imports = true
+
 # ---------------------------------------------------------------------------
 # Pytest
 # ---------------------------------------------------------------------------

@@ -15,7 +15,13 @@ from typing import Any, BinaryIO
 if sys.version_info >= (3, 11):
     import tomllib as _toml
 else:  # pragma: no cover - exercised on Python 3.10 only
-    import tomli as _toml
+    # tomli is declared as a conditional dependency in pyproject.toml with
+    # the env marker `python_version<'3.11'`, so on 3.11+ pip will not have
+    # installed it. Mypy still type-checks this branch under the pinned
+    # python_version=3.10 setting, so we suppress its missing-import error
+    # both via `[tool.mypy.overrides]` and inline so a partial override
+    # cannot regress the matrix.
+    import tomli as _toml  # type: ignore[import-not-found, unused-ignore]
 
 TOMLDecodeError = _toml.TOMLDecodeError
 """The decode-error type raised by :func:`loads` / :func:`load`."""
