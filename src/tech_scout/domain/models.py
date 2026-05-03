@@ -110,6 +110,7 @@ class CodebaseProfile(BaseModel):
 
     model_config = ConfigDict(frozen=True)
 
+    schema_version: int = Field(default=1, ge=1)
     root_path: Path
     scanned_at: datetime = Field(default_factory=datetime.now)
     entries: tuple[StackEntry, ...]
@@ -226,6 +227,7 @@ class CandidateList(BaseModel):
 
     model_config = ConfigDict(frozen=True)
 
+    schema_version: int = Field(default=1, ge=1)
     candidates: tuple[Candidate, ...] = Field(..., min_length=1, max_length=20)
     honourable_mentions: tuple[Finding, ...] = Field(default=(), max_length=10)
     scan_summary: str = Field(..., min_length=1, max_length=3000)
@@ -254,6 +256,7 @@ class UserSelection(BaseModel):
 
     model_config = ConfigDict(frozen=True)
 
+    schema_version: int = Field(default=1, ge=1)
     candidate_ids: tuple[str, ...] = Field(..., min_length=1, max_length=5)
     depth_override: Depth | None = None
     notes: str | None = Field(default=None, max_length=1000)
@@ -282,6 +285,7 @@ class RunSnapshot(BaseModel):
 
     model_config = ConfigDict(frozen=True)
 
+    schema_version: int = Field(default=1, ge=1)
     run_id: RunId
     request: ResearchRequest
     phases: tuple[PhaseProgress, ...] = Field(..., min_length=1)

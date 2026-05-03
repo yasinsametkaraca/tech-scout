@@ -132,7 +132,7 @@ Suppose you want a 9th document, a "letter to the team" (slot key
    `src/tech_scout/locales/en.py`, `tr.py`, etc. — supply the slot, the
    filename, the template filename, the min-word count, and any
    `required_section_keywords` for the validator.
-3. **Create the template per locale:** `templates/<code>/<filename>.j2`.
+3. **Create the template per locale:** `src/tech_scout/templates/<code>/<filename>.j2`.
 4. **Document the context:** add a section to
    `.claude/skills/tech-scout/reference/output-templates-guide.md` listing
    the required context fields.
@@ -165,9 +165,10 @@ templates. No changes to library or helper code.
    `src/tech_scout/domain/enums.py`.
 3. **Register the new instance** in `src/tech_scout/locales/registry.py`'s
    `_DEFAULT_REGISTRY`.
-4. **Create `templates/<code>/`** and translate every template from
-   `templates/en/`. Preserve all Jinja field names exactly — only prose
-   and labels change.
+4. **Create `src/tech_scout/templates/<code>/`** and translate every template
+   from `src/tech_scout/templates/en/`. Preserve all Jinja field names exactly
+   — only prose and labels change. Templates ship as package data so they
+   are present whether the user pip-installs the wheel or runs from source.
 5. **Update `make test`** — locale-specific tests should iterate over the
    registered locales rather than hardcode codes.
 6. **Run `make doctor`** to confirm all 8 templates are present for the

@@ -42,6 +42,20 @@ Thumbs.db
 .tech-scout/
 **/.tech-scout/
 
+# --- Atomic-IO stragglers (write-temp-then-rename leftovers) ---
+# atomic_write_text uses <name>.tmp.<hex>, replace_directory_atomically
+# uses <name>.staging.<hex> and <name>.bak.<hex>. They are normally cleaned
+# up; ignore them defensively in case of a hard crash mid-write.
+*.tmp.*
+*.staging.*
+*.bak.*
+
+# --- File-lock sentinel files ---
+# tech_scout.utils.file_lock creates <path>.lock siblings for cross-process
+# audit log appends. These should never be tracked.
+*.jsonl.lock
+.audit.lock
+
 # --- Local config / secrets ---
 .env
 .env.local
@@ -67,3 +81,25 @@ logs/
 # --- Type-stub auto-generated ---
 .dmypy.json
 dmypy.json
+
+# --- Test fixtures: empty/auto-populated subdirs ---
+# Only the files explicitly created by conftest.py fixtures are committed.
+# Anything else in these dirs is generated noise from a developer's local
+# experimentation and should not pollute the repo.
+tests/fixtures/sample_codebases/monorepo/
+tests/fixtures/sample_history/*/
+tests/fixtures/sample_state/*/
+
+# --- Editor / shell scratch ---
+*.swp
+*.swo
+.~lock.*
+.vscode/settings.json
+
+# --- Auxiliary docs / scratch (never committed) ---
+SCRATCH.md
+NOTES.md
+TODO.md
+TODO.txt
+*.scratch.*
+*.draft.*

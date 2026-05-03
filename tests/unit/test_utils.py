@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 from pathlib import Path
 
 import pytest
@@ -20,6 +21,7 @@ from tech_scout.utils.time import (
     parse_iso_date,
     parse_iso_datetime,
 )
+from tech_scout.utils.toml_compat import TOMLDecodeError, load, loads
 
 
 class TestPathSafety:
@@ -125,3 +127,22 @@ class TestTimeUtils:
     def test_humanize_negative_raises(self) -> None:
         with pytest.raises(ValueError):
             humanize_minutes(-5)
+
+
+class TestTomlCompat:
+    def test_loads_simple_table(self) -> None:
+        out = loads('[project]\nname = "x"\n')
+        assert out == {"project": {"name": "x"}}
+
+    def test_loads_invalid_raises(self) -> None:
+        with pytest.raises(TOMLDecodeError):
+            loads("not = valid = toml")
+
+    def test_load_from_binary_stream(self) -> None:
+        buf = io.BytesIO(b"[tool.x]\nflag = true\n")
+        out = load(buf)
+        assert out == {"tool": {"x": {"flag": True}}}
+
+    def test_loads_returns_native_python_types(self) -> None:
+        out = loads('name = "demo"\nversion = 2\nenabled = true\ntags = ["a", "b"]\n')
+        assert out == {"name": "demo", "version": 2, "enabled": True, "tags": ["a", "b"]}

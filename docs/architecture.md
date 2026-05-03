@@ -147,7 +147,7 @@ Every helper emits `{"status": "ok"|"error", "data": {...}}`. This makes the ski
 | `.claude/skills/tech-scout/reference/phase-3-filtering.md` | Stage A endpoint logic. Mistakes here break the entire two-stage flow. |
 | `.claude/agents/tech-scout-scanner.md` | Discovery subagent. Quality of week's findings depends on this being focused and honest. |
 | `.claude/agents/tech-scout-analyzer.md` | Per-topic analysis subagent. Output quality directly determines package quality. |
-| `templates/<locale>/01-detailed-analysis.md.j2` (and TR equivalent) | The longest, highest-stakes template. Sets the analysis-doc quality bar. |
+| `src/tech_scout/templates/<locale>/01-detailed-analysis.md.j2` (and TR equivalent) | The longest, highest-stakes template. Sets the analysis-doc quality bar. |
 | `src/tech_scout/locales/registry.py` | Locale registry. Filenames, validator rules, prompts, and labels for every language come from here. |
 | `src/tech_scout/output/validator.py` | The safety net for Phase 6. Tighter rules here = fewer broken packages. |
 | `src/tech_scout/codebase/stack_detector.py` | Phase 1's quality limits how relevant Phase 2's findings are. |
@@ -171,7 +171,7 @@ A `LocaleSpec` declares:
 
 - The two-letter `code`, `display_name`, and `aliases` (e.g. `english`).
 - The matching `Language` enum value.
-- The `template_subdir` under `templates/`.
+- The `template_subdir` under `src/tech_scout/templates/` (templates ship as package data).
 - One `LocaleDocumentSpec` per `OutputDocSlot` (filename, template filename,
   min word count, required-section keywords).
 - The verbatim Stage-A `selection_prompt`.
@@ -184,8 +184,8 @@ skill calls it once per run and uses the returned data so no
 locale-specific text is hardcoded in markdown.
 
 Adding a third locale takes one new file (`locales/<code>.py`), an entry in
-`locales/registry.py`, and a `templates/<code>/` directory with the eight
-templates. No other code changes.
+`locales/registry.py`, and a `src/tech_scout/templates/<code>/` directory
+with the eight templates. No other code changes.
 
 ---
 

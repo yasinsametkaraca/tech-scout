@@ -1,7 +1,15 @@
 """Read/write JSON state files for a single run.
 
 All read paths go through Pydantic validation so a malformed state file
-is caught at boundary instead of corrupting downstream phases.
+is caught at boundary instead of corrupting downstream phases. All write
+paths go through :func:`tech_scout.utils.atomic_io.atomic_write_text` so a
+crash mid-write never leaves the file in a half-written state — the file
+either reflects the previous content or the new content, never a mix.
+
+The store is also schema-version aware: persisted models carry a
+``schema_version`` field, and reads run the payload through
+:mod:`tech_scout.state.migrations` before validation so old runs can be
+resumed across tech-scout upgrades.
 """
 
 from __future__ import annotations
@@ -21,6 +29,7 @@ from tech_scout.domain.models import (
     UserSelection,
 )
 from tech_scout.domain.value_objects import RunId
+from tech_scout.state.migrations import migrate
 from tech_scout.state.schemas import (
     CANDIDATES_FILENAME,
     CODEBASE_PROFILE_FILENAME,
@@ -29,6 +38,7 @@ from tech_scout.state.schemas import (
     STATE_DIR_NAME,
     STATE_FILENAME,
 )
+from tech_scout.utils.atomic_io import atomic_write_text
 from tech_scout.utils.path_safety import ensure_directory
 
 log = get_logger(__name__)
@@ -68,7 +78,8 @@ class StateStore:
         target = self._target(filename)
         ensure_directory(target.parent)
         try:
-            target.write_text(
+            atomic_write_text(
+                target,
                 model.model_dump_json(indent=2, by_alias=False),
                 encoding="utf-8",
             )
@@ -102,6 +113,9 @@ class StateStore:
                 msg,
                 context={"path": str(target), "filename": filename},
             ) from exc
+
+        if isinstance(data, dict):
+            data = migrate(model_class.__name__, data)
 
         try:
             return model_class.model_validate(data)
@@ -148,7 +162,11 @@ class StateStore:
         target = self._target(PHASE_PROGRESS_FILENAME)
         ensure_directory(target.parent)
         try:
-            target.write_text(json.dumps(progress, indent=2, sort_keys=True), encoding="utf-8")
+            atomic_write_text(
+                target,
+                json.dumps(progress, indent=2, sort_keys=True),
+                encoding="utf-8",
+            )
         except OSError as exc:
             msg = f"Failed to write phase progress: {exc}"
             raise StateStoreError(msg, context={"path": str(target)}) from exc

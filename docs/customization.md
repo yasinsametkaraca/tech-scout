@@ -17,7 +17,7 @@ The plugin's behavior is split across deliberately small surfaces:
 | **Analysis rules** | Reading method, depth calibration, risk/roadmap shape | `.claude/agents/tech-scout-analyzer.md` |
 | **Sources catalog** | Curated list of outlets for the discovery sweep | `.claude/skills/tech-scout/reference/sources-catalog.md` |
 | **Locale text** | Selection prompt, candidate-display labels, final summary | `src/tech_scout/locales/<code>.py` |
-| **Output structure** | Sections in each of the 8 documents | `templates/<locale>/*.md.j2` |
+| **Output structure** | Sections in each of the 8 documents | `src/tech_scout/templates/<locale>/*.md.j2` |
 
 There is **no external prompt file**. Per-run inputs (company, codebase,
 focus, language) come from CLI flags or `AskUserQuestion` at run start.
@@ -62,8 +62,8 @@ Edit the "Hard Rules" section in
 
 Two places to touch:
 
-1. The Jinja template under `templates/<locale>/` for the actual rendered
-   layout.
+1. The Jinja template under `src/tech_scout/templates/<locale>/` for the
+   actual rendered layout.
 2. The corresponding entry in `_DOCUMENTS` in `src/tech_scout/locales/<code>.py`
    if you change `min_words` or `required_section_keywords` (these drive
    the validator).

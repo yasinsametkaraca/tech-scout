@@ -54,17 +54,42 @@ Repository = "https://github.com/yasinsametkaraca/tech-scout"
 Issues = "https://github.com/yasinsametkaraca/tech-scout/issues"
 
 # ---------------------------------------------------------------------------
+# Console scripts — installed by `pip install tech-scout`. Each one wraps a
+# helper module under tech_scout.cli with the standard JSON-envelope flow.
+# The legacy `python scripts/ts_*.py` invocations remain as thin shims so
+# the Claude Code plugin's Bash calls keep working from a source checkout.
+# ---------------------------------------------------------------------------
+
+[project.scripts]
+ts-doctor            = "tech_scout.cli.doctor:entry_point"
+ts-locale-info       = "tech_scout.cli.locale_info:entry_point"
+ts-scan-codebase     = "tech_scout.cli.scan_codebase:entry_point"
+ts-list-history      = "tech_scout.cli.list_history:entry_point"
+ts-setup-run         = "tech_scout.cli.setup_run:entry_point"
+ts-save-candidates   = "tech_scout.cli.save_candidates:entry_point"
+ts-load-candidates   = "tech_scout.cli.load_candidates:entry_point"
+ts-render-doc        = "tech_scout.cli.render_doc:entry_point"
+ts-validate-package  = "tech_scout.cli.validate_package:entry_point"
+ts-audit-show        = "tech_scout.cli.audit_show:entry_point"
+
+# ---------------------------------------------------------------------------
 # Hatchling build configuration
 # ---------------------------------------------------------------------------
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/tech_scout"]
 
+# Ensure the Jinja2 templates ship as package data inside the wheel under
+# ``tech_scout/templates/`` so :mod:`importlib.resources` can locate them in
+# the installed package. Hatchling already picks up non-.py files inside the
+# package; this stanza is the explicit, unambiguous declaration.
+[tool.hatch.build.targets.wheel.force-include]
+"src/tech_scout/templates" = "tech_scout/templates"
+
 [tool.hatch.build.targets.sdist]
 include = [
     "src/tech_scout",
     "scripts",
-    "templates",
     "tests",
     "docs",
     ".claude",
@@ -72,6 +97,10 @@ include = [
     "LICENSE",
     "Makefile",
     "pyproject.toml",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CODE_OF_CONDUCT.md",
 ]
 exclude = [
     "**/__pycache__",

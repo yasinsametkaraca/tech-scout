@@ -25,12 +25,13 @@ If a rule below conflicts with `CLAUDE.md`, the stricter interpretation wins.
 src/tech_scout/                  Library — pure Python, importable
   domain/                        Innermost: no I/O, no SDK, no logging-as-side-effect
   config/                        Settings + structlog setup
+  cli/                           Console-script entry points (ts-doctor, ts-render-doc, …)
   codebase/, history/,
   output/, state/,
   observability/, utils/         Infrastructure modules
-scripts/                         CLI entry points (call into src/, parse argparse, emit JSON)
+  templates/                     Jinja2 *.md.j2 (shipped as package data)
+scripts/                         Thin shims for python scripts/ts_*.py invocation
 tests/                           Pytest tests, mirroring src/tech_scout/ layout
-templates/                       Jinja2 *.md.j2 (no Python here)
 .claude/                         Claude Code plugin definition (no Python here)
 docs/                            Markdown documentation
 ```

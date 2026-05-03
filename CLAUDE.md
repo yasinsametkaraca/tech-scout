@@ -148,7 +148,9 @@ content rules and orchestration live inside the repo:
 - `.claude/agents/*.md` — discovery and analysis subagent rules
 - `src/tech_scout/locales/*.py` — per-language strings (selection
   prompt, labels, summary template)
-- `templates/<locale>/*.md.j2` — output structure
+- `src/tech_scout/templates/<locale>/*.md.j2` — output structure (shipped as
+  package data so the Jinja loader works whether the package is pip-installed
+  or run from a source checkout)
 
 Per-run inputs (`--company`, `--codebase`, `--website`, `--focus`,
 `--language`, etc.) come from CLI flags or, when missing, from

@@ -26,6 +26,7 @@ Commands:
     render-doc          Render a Jinja2 template to markdown
     validate-package    Validate a generated research package
     locale-info         Inspect a locale or list all registered locales
+    audit-show          Show the audit log for a research run
 
 For detailed help on a command:
     python -m tech_scout <command> --help
@@ -44,6 +45,7 @@ _COMMAND_TO_SCRIPT: dict[str, str] = {
     "render-doc": "ts_render_doc.py",
     "validate-package": "ts_validate_package.py",
     "locale-info": "ts_locale_info.py",
+    "audit-show": "ts_audit_show.py",
 }
 
 

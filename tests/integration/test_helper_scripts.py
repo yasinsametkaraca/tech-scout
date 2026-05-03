@@ -47,6 +47,7 @@ def _run_script(script_name: str, *args: str) -> dict[str, Any]:
 class TestDoctor:
     def test_runs_and_returns_envelope(self) -> None:
         envelope = _run_script("ts_doctor.py")
+        assert envelope["envelope_version"] == 1
         assert envelope["status"] in {"ok", "error"}
         assert "data" in envelope
         if envelope["status"] == "ok":
@@ -63,6 +64,7 @@ class TestDoctor:
             # error envelope's context — otherwise the user can't see
             # which check failed.
             data = envelope["data"]
+            assert data["error_code"] == "CONFIGURATION_INVALID"
             assert data["error_type"] == "ConfigurationError"
             assert "context" in data
             assert "checks" in data["context"]
@@ -89,7 +91,9 @@ class TestLocaleInfo:
 
     def test_unknown_locale_errors(self) -> None:
         envelope = _run_script("ts_locale_info.py", "--code", "kk")
+        assert envelope["envelope_version"] == 1
         assert envelope["status"] == "error"
+        assert envelope["data"]["error_code"] == "LOCALE_NOT_FOUND"
 
 
 class TestScanCodebase:
@@ -116,7 +120,9 @@ class TestScanCodebase:
 
     def test_nonexistent_path_errors(self, tmp_path: Path) -> None:
         envelope = _run_script("ts_scan_codebase.py", str(tmp_path / "missing"))
+        assert envelope["envelope_version"] == 1
         assert envelope["status"] == "error"
+        assert envelope["data"]["error_code"] == "CODEBASE_SCAN_FAILED"
 
 
 class TestListHistory:
@@ -365,7 +371,9 @@ class TestRenderDoc:
             "--output-folder",
             str(tmp_path / "out"),
         )
+        assert envelope["envelope_version"] == 1
         assert envelope["status"] == "error"
+        assert envelope["data"]["error_code"] == "TEMPLATE_RENDER_FAILED"
 
 
 def _write_minimal_english_package(target: Path) -> None:
@@ -451,5 +459,83 @@ class TestValidatePackage:
             "--locale-code",
             "en",
         )
+        assert envelope["envelope_version"] == 1
         assert envelope["status"] == "error"
+        assert envelope["data"]["error_code"] == "PACKAGE_VALIDATION_FAILED"
         assert "documents_missing" in envelope["data"]["context"]
+
+
+class TestAuditShow:
+    def test_round_trip_with_setup_run(self, tmp_path: Path) -> None:
+        out_folder = tmp_path / "out"
+        setup = _run_script(
+            "ts_setup_run.py",
+            "--output-folder",
+            str(out_folder),
+            "--depth",
+            "standard",
+        )
+        run_id = setup["data"]["run_id"]
+
+        envelope = _run_script(
+            "ts_audit_show.py",
+            "--run-id",
+            run_id,
+            "--output-folder",
+            str(out_folder),
+        )
+        assert envelope["envelope_version"] == 1
+        assert envelope["status"] == "ok"
+        body = envelope["data"]
+        assert body["run_id"] == run_id
+        # ts_setup_run emits at least one "run_initialized" event
+        assert body["event_count_total"] >= 1
+        assert "preview" in body
+        event_types = {e["event_type"] for e in body["events"]}
+        assert "run_initialized" in event_types
+
+    def test_missing_run_errors(self, tmp_path: Path) -> None:
+        envelope = _run_script(
+            "ts_audit_show.py",
+            "--run-id",
+            "2026-04-29-aaa11111",
+            "--output-folder",
+            str(tmp_path / "nowhere"),
+        )
+        assert envelope["status"] == "error"
+        assert envelope["data"]["error_code"] == "STATE_STORE_ERROR"
+
+
+class TestEnvelopeContract:
+    """Cross-script invariants the skill relies on (see docs/cli-contract.md)."""
+
+    def test_success_envelope_versioned(self) -> None:
+        envelope = _run_script("ts_locale_info.py", "--list")
+        assert envelope["envelope_version"] == 1
+        assert envelope["status"] == "ok"
+        assert isinstance(envelope["data"], dict)
+
+    def test_error_envelope_has_stable_fields(self) -> None:
+        envelope = _run_script("ts_locale_info.py", "--code", "klingon")
+        assert envelope["envelope_version"] == 1
+        assert envelope["status"] == "error"
+        body = envelope["data"]
+        # The four stable fields the skill may switch on or display.
+        assert set(body.keys()) >= {"error_code", "error_type", "message", "context"}
+        assert isinstance(body["error_code"], str)
+        assert body["error_code"].isupper()
+
+    def test_help_does_not_emit_envelope(self) -> None:
+        # --help is for humans; argparse handles it, no JSON envelope.
+        cmd = [sys.executable, str(_SCRIPTS / "ts_locale_info.py"), "--help"]
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=False,
+            cwd=str(_REPO_ROOT),
+        )
+        assert result.returncode == 0
+        assert "envelope_version" not in result.stdout

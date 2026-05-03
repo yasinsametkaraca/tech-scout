@@ -12,7 +12,7 @@ import os
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from tech_scout.domain.exceptions import LocaleNotFoundError
@@ -22,8 +22,12 @@ from tech_scout.locales.registry import DEFAULT_LOCALE_CODE, get_locale
 def _repo_root() -> Path:
     """Return the repository root (where pyproject.toml lives).
 
-    Walks up from this file until a ``pyproject.toml`` is found. Falls back
-    to the parent of ``src/tech_scout/`` if none found.
+    Walks up from this file until a ``pyproject.toml`` is found. When the
+    package is pip-installed, no ``pyproject.toml`` is present in any
+    parent of ``site-packages``; in that case we fall back to the
+    package's parent directory. Code that needs the bundled templates
+    must use :func:`tech_scout.output.template_assets.packaged_templates_root`
+    rather than rebuilding a path from the repo root.
     """
     here = Path(__file__).resolve()
     for parent in here.parents:
@@ -34,6 +38,18 @@ def _repo_root() -> Path:
 
 _REPO_ROOT = _repo_root()
 _DEFAULT_OUTPUT_ROOT = Path.home() / "tech-scout-runs"
+
+
+def _default_templates_dir() -> Path:
+    """Resolve the default templates directory across install modes.
+
+    Lazy import — :mod:`tech_scout.output` is heavier than :mod:`config`
+    and we want ``Settings`` instantiation to stay cheap. The function is
+    called once at field-default time per process.
+    """
+    from tech_scout.output.template_assets import packaged_templates_root
+
+    return packaged_templates_root()
 
 
 class Settings(BaseSettings):
@@ -56,7 +72,7 @@ class Settings(BaseSettings):
     # --- Paths ---
 
     repo_root: Path = Field(default=_REPO_ROOT)
-    templates_dir: Path = Field(default=_REPO_ROOT / "templates")
+    templates_dir: Path = Field(default_factory=_default_templates_dir)
     scripts_dir: Path = Field(default=_REPO_ROOT / "scripts")
     skill_reference_dir: Path = Field(
         default=_REPO_ROOT / ".claude" / "skills" / "tech-scout" / "reference"
@@ -102,15 +118,15 @@ class Settings(BaseSettings):
             raise ValueError(str(exc)) from exc
         return spec.code
 
-    @field_validator("max_candidates")
-    @classmethod
-    def _max_geq_min(cls, v: int, info: object) -> int:
-        data = getattr(info, "data", {}) or {}
-        min_value = data.get("min_candidates", 8)
-        if v < min_value:
-            msg = f"max_candidates ({v}) must be >= min_candidates ({min_value})"
+    @model_validator(mode="after")
+    def _check_candidate_bounds(self) -> Settings:
+        if self.max_candidates < self.min_candidates:
+            msg = (
+                f"max_candidates ({self.max_candidates}) must be "
+                f">= min_candidates ({self.min_candidates})"
+            )
             raise ValueError(msg)
-        return v
+        return self
 
     def resolve_output_root(self, override: Path | None = None) -> Path:
         return override if override is not None else self.default_output_root

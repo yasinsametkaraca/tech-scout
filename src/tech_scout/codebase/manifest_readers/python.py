@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -14,12 +13,7 @@ from tech_scout.codebase.manifest_readers._base import (
 )
 from tech_scout.domain.enums import StackKind
 from tech_scout.domain.exceptions import CodebaseScanError
-
-if sys.version_info >= (3, 11):
-    import tomllib
-else:
-    import tomli as tomllib  # type: ignore[no-redef, unused-ignore, import-not-found]
-
+from tech_scout.utils.toml_compat import TOMLDecodeError, loads as toml_loads
 
 _FILENAMES = {"pyproject.toml", "requirements.txt", "setup.py", "setup.cfg", "Pipfile"}
 _REQ_LINE = re.compile(
@@ -54,8 +48,8 @@ class PythonManifestReader(ManifestReader):
 
     def _read_pyproject(self, path: Path) -> ManifestReadResult:
         try:
-            data: dict[str, Any] = tomllib.loads(path.read_text(encoding="utf-8"))
-        except (tomllib.TOMLDecodeError, OSError) as exc:
+            data: dict[str, Any] = toml_loads(path.read_text(encoding="utf-8"))
+        except (TOMLDecodeError, OSError) as exc:
             return ManifestReadResult(
                 manifest_path=path,
                 ecosystem="python",

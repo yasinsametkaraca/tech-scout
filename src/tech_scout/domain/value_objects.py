@@ -8,9 +8,9 @@ re-validating defensively.
 from __future__ import annotations
 
 import re
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated
 
 from pydantic import (
     AfterValidator,
@@ -19,6 +19,7 @@ from pydantic import (
     Field,
     HttpUrl,
     field_validator,
+    model_validator,
 )
 
 _RUN_ID_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}-[a-z0-9]{6,12}$")
@@ -78,29 +79,21 @@ class TimeWindow(BaseModel):
     start: datetime
     end: datetime
 
-    @field_validator("end")
-    @classmethod
-    def _end_after_start(cls, v: datetime, info: Any) -> datetime:
-        start = info.data.get("start") if hasattr(info, "data") else None
-        if start is not None and v <= start:
-            msg = f"TimeWindow end must be after start: start={start}, end={v}"
+    @model_validator(mode="after")
+    def _check_end_after_start(self) -> TimeWindow:
+        if self.end <= self.start:
+            msg = f"TimeWindow end must be after start: start={self.start}, end={self.end}"
             raise ValueError(msg)
-        return v
+        return self
 
     @classmethod
     def last_n_days(cls, days: int, *, now: datetime | None = None) -> TimeWindow:
         end = now if now is not None else datetime.now()
-        start = end.replace(microsecond=0) - _days_delta(days)
+        start = end.replace(microsecond=0) - timedelta(days=days)
         return cls(start=start, end=end.replace(microsecond=0))
 
     def days(self) -> int:
         return (self.end - self.start).days
-
-
-def _days_delta(days: int) -> Any:
-    from datetime import timedelta
-
-    return timedelta(days=days)
 
 
 class SourceRef(BaseModel):
