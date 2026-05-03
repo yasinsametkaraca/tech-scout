@@ -32,12 +32,17 @@ def loads(text: str) -> dict[str, Any]:
 
     Raises :class:`TOMLDecodeError` on malformed input.
     """
-    return _toml.loads(text)
+    # The intermediate annotated assignment narrows the underlying call's
+    # return type from Any (when tomli is treated as an untyped import on
+    # Python 3.11+ matrix legs) to the public API's promised dict shape.
+    result: dict[str, Any] = _toml.loads(text)
+    return result
 
 
 def load(fp: BinaryIO) -> dict[str, Any]:
     """Parse TOML content from a binary file-like object."""
-    return _toml.load(fp)
+    result: dict[str, Any] = _toml.load(fp)
+    return result
 
 
 __all__ = ["TOMLDecodeError", "load", "loads"]
